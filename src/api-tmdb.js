@@ -12,6 +12,6 @@ const options = {
 
 
 export default function getApi(url) {
-  return axios.get(url, options).then(console.log);
+  return axios.get(url, options).then(r=> r.data);
 }
 
