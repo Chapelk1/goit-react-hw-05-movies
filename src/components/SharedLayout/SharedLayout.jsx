@@ -1,13 +1,26 @@
-import { Link, Outlet } from "react-router-dom"
-
+import { Outlet} from "react-router-dom"
+import { Suspense } from "react"
+import {
+  Container,
+  Header,
+  Link,
+  Paragraf,
+} from 'components/SharedLayout/SharedLayout.styled';
 
 export default function SharedLayout(){
 
     return (
-        <>
-            <Link to="/"> Home </Link>
+      <>
+        <Container>
+          <Header>
+            <Link to="/" end> Home </Link>
             <Link to="/movies">Movies</Link>
-            <Outlet/>
-        </>
-    )
+          </Header>
+
+          <Suspense fallback={<Paragraf>Loading page...</Paragraf>}>
+            <Outlet />
+          </Suspense>
+        </Container>
+      </>
+    );
 }

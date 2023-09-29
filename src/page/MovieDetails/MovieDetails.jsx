@@ -1,38 +1,75 @@
-import { Link, Outlet } from "react-router-dom"
-import { useParams, useLocation } from 'react-router-dom';
+import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from "react";
-import getApi from "api-tmdb";
-
+import { getApi } from "api-tmdb";
+import { Suspense } from 'react';
+import {
+  LinkItm,
+  Wraper,
+  WraperImg,
+  WraperDesc,
+  Paragraf,
+  Title,
+  SecondTitle,
+  Thumb,
+  WraperBtn,
+} from './MovieDetails.styled';
 
 export default function MovieDetails() {
     const { movieId } = useParams();
     const [movie, setMovie] = useState(null)
+    const location = useLocation()
+    const backLinkHref = location.state?.from ?? '/movies';
+  
     const url = `https://api.themoviedb.org/3/movie/${movieId}`;
     
     useEffect(() => {
-        getApi(url).then(setMovie);
-    }, [])
+      getApi(url).then(setMovie);
+    }, [url]);
 
+  
+    const img = 'https://fakeimg.pl/400x600'
+  
 
     return (
       <>
+        <LinkItm to={backLinkHref}>{`< Back`}</LinkItm>
         {movie && (
           <>
-            <div>
-              <img
-                src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
-                alt=""
-              />
-              <h1>{movie.title}</h1>
-              <p>Vote averages: {movie.vote_average.toFixed(1)}</p>
-              <h2>Overview</h2>
-              <p>{movie.overview}</p>
-              <h2>Genres</h2>
-              {movie.genres.map(genre => (<p>{genre.name}</p>))}
-            </div>
-            <Link to="cats">Cats</Link>
-            <Link to="reviews">Reviews</Link>
-            <Outlet />
+            <Wraper>
+              <Thumb>
+                <WraperImg>
+                  <img
+                    src={movie.poster_path ? `https://image.tmdb.org/t/p/original${movie.poster_path}` : img}
+                    alt={movie.title}
+                  />
+                </WraperImg>
+                <WraperBtn>
+                  <LinkItm to="cast" state={{ from: backLinkHref }}>
+                    Cast
+                  </LinkItm>
+                  <LinkItm to="reviews" state={{ from: backLinkHref }}>
+                    Reviews
+                  </LinkItm>
+                </WraperBtn>
+              </Thumb>
+
+              <WraperDesc>
+                <Title>{movie.title}</Title>
+                <Paragraf>
+                  Vote averages: {movie.vote_average.toFixed(1)}
+                </Paragraf>
+                <SecondTitle>Overview</SecondTitle>
+                <Paragraf>{movie.overview}</Paragraf>
+                <SecondTitle>Genres</SecondTitle>
+                {movie.genres.map(genre => (
+                  <Paragraf key={genre.name}>{genre.name}</Paragraf>
+                ))}
+              </WraperDesc>
+            </Wraper>
+
+            <Suspense fallback={<Paragraf>Loading subpage...</Paragraf>}>
+              <Outlet />
+            </Suspense>
           </>
         )}
       </>
