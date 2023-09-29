@@ -29,7 +29,7 @@ export function getApiCasts(movieId) {
 
 export function getApiReviews(movieId) {
   return axios
-    .get(`https://api.themoviedb.org/3/movie/${movieId}/reviewsgg`, options)
+    .get(`https://api.themoviedb.org/3/movie/${movieId}/reviews`, options)
 }
 
 export function getApiQuery( query) {
