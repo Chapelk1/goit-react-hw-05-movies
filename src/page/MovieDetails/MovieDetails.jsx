@@ -1,6 +1,6 @@
 import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from "react";
-import { getApi } from "api-tmdb";
+import { getApiMovie } from "api-tmdb";
 import { Suspense } from 'react';
 import {
   LinkItm,
@@ -22,9 +22,15 @@ export default function MovieDetails() {
   
     const url = `https://api.themoviedb.org/3/movie/${movieId}`;
     
-    useEffect(() => {
-      getApi(url).then(setMovie);
-    }, [url]);
+  useEffect(() => {
+    getApiMovie(movieId)
+      .then(r => {
+        setMovie(r.data);
+      })
+      .catch(r => {
+        console.error(r.response.data.status_message);
+      });
+    }, [movieId]);
 
   
     const img = 'https://fakeimg.pl/400x600'

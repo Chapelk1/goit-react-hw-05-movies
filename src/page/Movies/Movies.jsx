@@ -8,27 +8,26 @@ export default function Movies() {
   const [searchParams, setSearchParams] = useSearchParams();
   const movieName = searchParams.get('query') ?? '';
   const [movies, setMovies] = useState([]);
-
-  const url = `https://api.themoviedb.org/3/search/movie`;
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
     if (movieName !== '') {
-      getApiQuery(url, movieName).then(r => {
-        setMovies(r.results);
-      });
+      getApiQuery(movieName).then(r => {
+        setMovies(r.data.results);
+      }).catch(r => { console.error(r.response.data.status_message); })
     }
-  }, [url]);
+  }, [movieName]);
   
   const updateQuery = (query) => {
-    const queryContent = query !== '' ? { query } : {};
-    setSearchParams(queryContent);
+      setQuery(query);
   }
 
   const submitForm = (e) => {
     e.preventDefault();
-    getApiQuery(url, movieName).then(r => {
-      setMovies(r.results);
-    });
+    if (query === '') {
+      return;
+    }
+    setSearchParams({ query });
   }
 
 
@@ -36,7 +35,7 @@ export default function Movies() {
       <>
         <Form onSubmit={submitForm}>
           <Input
-            value={movieName}
+            value={query}
             onChange={e => {
               updateQuery(e.target.value);
             }}

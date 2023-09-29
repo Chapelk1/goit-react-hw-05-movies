@@ -1,6 +1,6 @@
 import { useParams} from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getApi } from 'api-tmdb';
+import { getApiReviews } from 'api-tmdb';
 import ReviewsList from 'components/ReviewsList/ReviewsList';
 import {Descr} from './Reviews.styled'
 
@@ -9,19 +9,23 @@ import {Descr} from './Reviews.styled'
 export default function Reviews() {
     const { movieId } = useParams();
     const [reviews, setReviews] = useState(null);
-    const [visibleText, setVisibleText] = useState(true);
-    const url = `https://api.themoviedb.org/3/movie/${movieId}/reviews`;
+    const [visibleText, setVisibleText] = useState(false);
   
     useEffect(() => {
-      getApi(url).then(r => {
-        if (r.total_pages !== 0) {
-          setReviews(r)
-          setVisibleText(false)
-          return;
-        }
-
-      });
-    }, [url]);
+      getApiReviews(movieId)
+        .then(r => {
+          if (r.total_pages !== 0) {
+            setReviews(r.data);
+            setVisibleText(false);
+            return;
+          }
+          setVisibleText(true);
+        })
+        .catch(r => {
+          setVisibleText(true);
+          console.error(r.response.data.status_message);
+        });
+    }, [movieId]);
 
   return (
     <>
