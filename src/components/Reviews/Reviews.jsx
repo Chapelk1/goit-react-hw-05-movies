@@ -14,12 +14,12 @@ export default function Reviews() {
     useEffect(() => {
       getApiReviews(movieId)
         .then(r => {
-          if (r.total_pages !== 0) {
-            setReviews(r.data);
-            setVisibleText(false);
+          if (r.data.total_pages === 0) {
+            setVisibleText(true);
             return;
           }
-          setVisibleText(true);
+          setReviews(r.data);
+          setVisibleText(false);
         })
         .catch(r => {
           setVisibleText(true);
